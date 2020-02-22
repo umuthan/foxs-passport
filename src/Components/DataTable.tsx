@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import { Grid,
          Paper,
          CircularProgress } from '@material-ui/core';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import { Image as ImageIcon,
          LocationOn as LocationIcon,
          ArrowUpward as ArrowUpwardIcon,
@@ -62,6 +63,7 @@ const DataTable: React.FC<IProps> = (props) => {
   } = props;
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [table, setTable] = useState<TableState>({
     columns: [
       { title: 'Title', field: 'title' },
@@ -74,11 +76,16 @@ const DataTable: React.FC<IProps> = (props) => {
 
     loading && (
       getPosts().then(posts=>{
-        setTable({
-          columns: table.columns,
-          data: posts
-        })
-        setLoading(false);
+        if(posts.length >= 0) {
+          setTable({
+            columns: table.columns,
+            data: posts
+          })
+          setLoading(false);
+        } else {
+          setLoading(false);
+          setError(true);
+        }
       })
     )
 
@@ -109,6 +116,15 @@ const DataTable: React.FC<IProps> = (props) => {
       {loading ? (
         <Grid container justify={'center'}>
           <CircularProgress />
+        </Grid>
+      ) : error ? (
+        <Grid container justify={'center'}>
+          <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+            <Alert severity="error">
+              <AlertTitle>Error</AlertTitle>
+              Error while connecting to API.
+            </Alert>
+          </Grid>
         </Grid>
       ) : (
         <MaterialTable

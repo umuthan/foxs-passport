@@ -9,6 +9,7 @@ import { createPost } from '../Api/Api';
 const AddItem: React.FC = () => {
 
   const [added, setAdded] = useState(false);
+  const [error, setError] = useState(false);
   const [title, setTitle] = useState('');
   const [currentLocation, setCurrentLocation] = useState({
     lat: 0,
@@ -20,6 +21,8 @@ const AddItem: React.FC = () => {
       if(data.title) {
         setAdded(true);
         setTitle(data.title);
+      } else {
+        setError(true);
       }
     });
   }
@@ -45,6 +48,11 @@ const AddItem: React.FC = () => {
         <Alert severity="success">
           <AlertTitle>Success</AlertTitle>
           {title} added!
+        </Alert>
+      ) : error ? (
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          Error while connecting to API.
         </Alert>
       ) : (
         (currentLocation.lat === 0 && currentLocation.long === 0) ? (

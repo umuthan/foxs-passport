@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography,
          Grid,
          CircularProgress } from '@material-ui/core';
+import { Alert, AlertTitle } from '@material-ui/lab';
 
 import { Map, TileLayer, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -28,6 +29,7 @@ const Passport: React.FC = () => {
   const classes = styles();
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [posts, setPosts] = useState<PostsState>({
     data: []
   });
@@ -37,10 +39,15 @@ const Passport: React.FC = () => {
 
     loading && (
       getPosts().then(posts=>{
-        setPosts({
-          data: posts
-        });
-        setLoading(false);
+        if(posts.length >= 0) {
+          setPosts({
+            data: posts
+          });
+          setLoading(false);
+        } else {
+          setLoading(false);
+          setError(true);
+        }
       })
     );
 
@@ -62,6 +69,15 @@ const Passport: React.FC = () => {
     loading ? (
       <Grid container justify={'center'}>
         <CircularProgress />
+      </Grid>
+    ) : error ? (
+      <Grid container justify={'center'}>
+        <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            Error while connecting to API.
+          </Alert>
+        </Grid>
       </Grid>
     ) : (
       <>
